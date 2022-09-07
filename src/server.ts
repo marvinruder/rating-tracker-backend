@@ -19,6 +19,19 @@ class Server {
 
 const server = new Server();
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+server.app.use((req, res, next) => {
+  console.log(
+    new Date().toISOString(),
+    req.headers["x-forwarded-for"] || req.socket.remoteAddress,
+    req.headers.host,
+    req.method,
+    req.url,
+    req.params
+  );
+  next();
+});
+
 server.app.use("/api-docs", SwaggerUI.serve, SwaggerUI.setup(swaggerDocument));
 server.app.get("/api-spec/v3", (req, res) => res.json(swaggerDocument));
 
