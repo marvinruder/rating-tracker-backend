@@ -3,8 +3,9 @@ import express from "express";
 import cors from "cors";
 import MainRouter from "./routers/Router";
 import SwaggerUI from "swagger-ui-express";
-import swaggerDocument from "../docs/openapi.json";
+import swaggerDocument from "src/openapi.json";
 import * as OpenApiValidator from "express-openapi-validator";
+import { OpenAPIV3 } from "express-openapi-validator/dist/framework/types";
 
 dotenv.config({
   path: ".env.local",
@@ -37,7 +38,7 @@ server.app.get("/api-spec/v3", (req, res) => res.json(swaggerDocument));
 
 server.app.use(
   OpenApiValidator.middleware({
-    apiSpec: "docs/openapi.json",
+    apiSpec: swaggerDocument as unknown as OpenAPIV3.Document,
     validateRequests: true,
     validateResponses: true,
   })
