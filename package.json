@@ -37,6 +37,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
+    "src": "link:./src",
     "ts-node": "^10.9.1"
   },
   "packageManager": "yarn@3.2.3"

@@ -30,7 +30,6 @@ node {
                 if (env.BRANCH_NAME == 'main') {
                     image.push(main_tag)
                 } else if (!(env.BRANCH_NAME).startsWith('renovate')) {
-                    image.push(main_tag)
                     image.push(branch_tag)
                 }
             }
