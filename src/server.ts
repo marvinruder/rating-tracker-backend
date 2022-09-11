@@ -3,9 +3,11 @@ import express from "express";
 import cors from "cors";
 import MainRouter from "./routers/Router";
 import SwaggerUI from "swagger-ui-express";
-import swaggerDocument from "src/openapi.json";
+import swaggerDocument from "./openapi.json";
 import * as OpenApiValidator from "express-openapi-validator";
 import { OpenAPIV3 } from "express-openapi-validator/dist/framework/types";
+import { getStockRepository } from "./redis/repositories/stockRepository";
+import chalk from "chalk";
 
 dotenv.config({
   path: ".env.local",
@@ -20,15 +22,36 @@ class Server {
 
 const server = new Server();
 
+const highlightMethod = (method: string) => {
+  switch (method) {
+    case "GET":
+      return chalk.bgBlue(method);
+
+    case "POST":
+      return chalk.bgGreen(method);
+
+    case "PUT":
+      return chalk.bgYellow(method);
+
+    case "DELETE":
+      return chalk.bgRed(method);
+
+    default:
+      return method;
+  }
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 server.app.use((req, res, next) => {
   console.log(
-    new Date().toISOString(),
-    req.headers["x-forwarded-for"] || req.socket.remoteAddress,
-    req.headers.host,
-    req.method,
-    req.url,
-    req.params
+    chalk.blue(
+      new Date().toISOString(),
+      req.headers["x-forwarded-for"] || req.socket.remoteAddress,
+      req.headers.host,
+      highlightMethod(req.method),
+      req.url,
+      JSON.stringify(req.params)
+    )
   );
   next();
 });
@@ -48,6 +71,9 @@ server.app.use("/api", cors(), server.router);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 server.app.use((err, req, res, next) => {
+  console.error(
+    chalk.redBright(`Terminating with error code ${err.status}: ${err.message}`)
+  );
   // format error
   res.status(err.status || 500).json({
     message: err.message,
@@ -55,4 +81,8 @@ server.app.use((err, req, res, next) => {
   });
 });
 
-server.app.listen(PORT, () => console.log(`> Listening on port ${PORT}`));
+server.app.listen(PORT, () =>
+  console.log(chalk.green(`> Listening on port ${PORT}`))
+);
+
+getStockRepository();

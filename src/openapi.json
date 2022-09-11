@@ -28,20 +28,20 @@
     }
   ],
   "paths": {
-    "/api/stock/details/{ticker}": {
+    "/api/stock/details/{entityID}": {
       "get": {
-        "summary": "Stock API",
-        "description": "Get a list of all stocks known to the service with all available attributes",
+        "summary": "Stock Details API",
+        "description": "Get a list of the specified stocks with all available attributes",
         "parameters": [
           {
             "in": "path",
-            "name": "ticker",
+            "name": "entityID",
             "required": true,
             "schema": {
               "type": "array",
               "items": {
                 "type": "string",
-                "example": "AAPL"
+                "example": "01FJYWEYRHYFT8YTEGQBABJ43J"
               }
             }
           }
@@ -61,7 +61,7 @@
             }
           },
           "404": {
-            "description": "Ticker not found",
+            "description": "Stock Entity not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -75,8 +75,8 @@
     },
     "/api/stock/list": {
       "get": {
-        "summary": "Stock API",
-        "description": "Get a list of all stocks tickers known to the service",
+        "summary": "Stock List API",
+        "description": "Get a list of all stock entity IDs known to the service",
         "responses": {
           "200": {
             "description": "OK",
@@ -86,8 +86,53 @@
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "example": "AAPL"
+                    "example": "01FJYWEYRHYFT8YTEGQBABJ43J"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stock/fillWithExampleData": {
+      "put": {
+        "summary": "Stock Example Data API",
+        "description": "Fills the connected data service with example stocks",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/stock/{entityID}": {
+      "delete": {
+        "summary": "Delete Stock API",
+        "description": "Delete the specified stock",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entityID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "01FJYWEYRHYFT8YTEGQBABJ43J"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "content": {}
+          },
+          "404": {
+            "description": "Stock Entity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }

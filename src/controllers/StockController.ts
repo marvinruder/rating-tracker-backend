@@ -1,23 +1,34 @@
 import { Request, Response } from "express";
-import APIError from "src/apiError";
 import exampleStocks from "src/exampleStocks";
+import {
+  createStockWithoutReindexing,
+  deleteStock,
+  readAllStocks,
+  readStocks,
+  reindexStockRepository,
+} from "src/redis/repositories/stockRepository";
 
 class StockController {
-  getList() {
-    return exampleStocks.map((stock) => stock.ticker);
+  async getList(res: Response) {
+    return res.status(200).json(await readAllStocks());
   }
 
-  getDetails(req: Request, res: Response) {
-    const stocks = exampleStocks.filter((stock) =>
-      req.params[0].split(",").includes(stock.ticker)
-    );
-    req.params[0].split(",").forEach((ticker) => {
-      if (!stocks.some((stock) => stock.ticker == ticker)) {
-        throw new APIError(404, `Ticker ${ticker} not found.`);
-      }
-    });
-    return res.status(200).json(stocks);
+  async getDetails(req: Request, res: Response) {
+    return res.status(200).json(await readStocks(req.params[0].split(",")));
+  }
+
+  async fillWithExampleData(res: Response) {
+    for (const stock of exampleStocks) {
+      await createStockWithoutReindexing(stock);
+    }
+    reindexStockRepository();
+    return res.status(201).end();
+  }
+
+  async delete(req: Request, res: Response) {
+    await deleteStock(req.params[0]);
+    return res.status(204).end();
   }
 }
 
-export = new StockController();
+export default new StockController();

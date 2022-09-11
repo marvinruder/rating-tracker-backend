@@ -21,4 +21,4 @@ class MainRouter {
   }
 }
 
-export = new MainRouter().router;
+export default new MainRouter().router;
