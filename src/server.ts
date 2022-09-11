@@ -61,7 +61,7 @@ const statusCodeDescription = (statusCode: number) => {
 server.app.use(
   responseTime((req: Request, res: Response, time) => {
     console.log(
-      chalk.blue(
+      chalk.blueBright(
         new Date().toISOString(),
         req.headers["x-forwarded-for"] || req.socket.remoteAddress,
         req.headers.host,
