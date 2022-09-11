@@ -10,11 +10,23 @@ console.log(
 );
 export const stockRepository = client.fetchRepository(stockSchema);
 await stockRepository.createIndex();
-console.log(chalk.grey("Stock Repository is now fetched and indexed."));
+console.log(
+  chalk.grey(
+    `Stock Repository is now fetched and indexed (${await stockRepository
+      .search()
+      .count()} stocks available).`
+  )
+);
 
 export const indexStockRepository = async () => {
   await stockRepository.createIndex();
-  console.log(chalk.grey("Stock Repository is now freshly indexed."));
+  console.log(
+    chalk.grey(
+      `Stock Repository is now freshly indexed (${await stockRepository
+        .search()
+        .count()} stocks available).`
+    )
+  );
 };
 
 export const createStockWithoutReindexing = async (stock: Stock) => {
@@ -50,22 +62,32 @@ export const createStock = async (stock: Stock) => {
   indexStockRepository();
 };
 
-export const readStock = async (entityID: string) => {
-  return await readStocks([entityID]);
+// export const readStock = async (entityID: string) => {
+//   return await readStocks([entityID]);
+// };
+
+// export const readStocks = async (entityIDs: string[]) => {
+//   return (await stockRepository.fetch(entityIDs)).map((stockEntity) => {
+//     const stock = new Stock(stockEntity);
+//     if (stock.ticker) {
+//       return stock;
+//     }
+//     throw new APIError(404, `Stock Entity ${stockEntity.entityId} not found.`);
+//   });
+// };
+
+export const readAllStocks = async (offset: number, count: number) => {
+  if (isNaN(offset)) {
+    offset = 0;
+  }
+  if (isNaN(count)) {
+    return await stockRepository.search().all();
+  }
+  return await stockRepository.search().return.page(offset, count);
 };
 
-export const readStocks = async (entityIDs: string[]) => {
-  return (await stockRepository.fetch(entityIDs)).map((stockEntity) => {
-    const stock = new Stock(stockEntity);
-    if (stock.ticker) {
-      return stock;
-    }
-    throw new APIError(404, `Stock Entity ${stockEntity.entityId} not found.`);
-  });
-};
-
-export const readAllStocks = async () => {
-  return await stockRepository.search().allIds();
+export const readStockCount = async () => {
+  return await stockRepository.search().count();
 };
 
 export const deleteStockWithoutReindexing = async (entityID: string) => {

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import MainRouter from "./routers/Router.js";
 import SwaggerUI from "swagger-ui-express";
@@ -58,17 +58,16 @@ const statusCodeDescription = (statusCode: number) => {
   return statusCodeString;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 server.app.use(
-  responseTime((req, res, time) => {
+  responseTime((req: Request, res: Response, time) => {
     console.log(
       chalk.blue(
         new Date().toISOString(),
         req.headers["x-forwarded-for"] || req.socket.remoteAddress,
         req.headers.host,
         highlightMethod(req.method),
-        req.url,
-        JSON.stringify(req.params),
+        req.path,
+        JSON.stringify(req.query),
         " – ",
         statusCodeDescription(res.statusCode),
         `after ${Math.round(time)} ms`

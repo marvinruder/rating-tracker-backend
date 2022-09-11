@@ -1,20 +1,25 @@
 import { Request, Response } from "express";
+import { Stock } from "../models/stock.js";
 import exampleStocks from "../exampleStocks.js";
 import {
   createStockWithoutReindexing,
   deleteStock,
   readAllStocks,
-  readStocks,
   indexStockRepository,
+  readStockCount,
 } from "../redis/repositories/stockRepository.js";
 
 class StockController {
-  async getList(res: Response) {
-    return res.status(200).json(await readAllStocks());
-  }
-
-  async getDetails(req: Request, res: Response) {
-    return res.status(200).json(await readStocks(req.params[0].split(",")));
+  async getList(req: Request, res: Response) {
+    return res.status(200).json({
+      stocks: (
+        await readAllStocks(
+          parseInt(req.query.offset as string),
+          parseInt(req.query.count as string)
+        )
+      ).map((stockEntity) => new Stock(stockEntity)),
+      count: await readStockCount(),
+    });
   }
 
   async fillWithExampleData(res: Response) {

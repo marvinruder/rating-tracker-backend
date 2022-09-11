@@ -18,11 +18,8 @@ class StockRouter {
    * Connect routes to their matching controller endpoints.
    */
   private _configure() {
-    this._router.get("/details/*", async (req: Request, res: Response) => {
-      await this._controller.getDetails(req, res);
-    });
     this._router.get("/list", async (req: Request, res: Response) => {
-      await this._controller.getList(res);
+      await this._controller.getList(req, res);
     });
     this._router.put(
       "/fillWithExampleData",

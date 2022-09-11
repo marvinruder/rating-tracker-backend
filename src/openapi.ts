@@ -30,22 +30,30 @@ export const openapiDocument: OpenAPIV3.Document = {
     },
   ],
   paths: {
-    "/api/stock/details/{entityID}": {
+    "/api/stock/list": {
       get: {
-        summary: "Stock Details API",
-        description:
-          "Get a list of the specified stocks with all available attributes",
+        summary: "Stock List API",
+        description: "Get a list of stocks. Supports pagination.",
         parameters: [
           {
-            in: "path",
-            name: "entityID",
-            required: true,
+            in: "query",
+            name: "offset",
+            description: "The zero-based offset. Used for pagination.",
+            required: false,
             schema: {
-              type: "array",
-              items: {
-                type: "string",
-                example: "01FJYWEYRHYFT8YTEGQBABJ43J",
-              },
+              type: "number",
+              example: 0,
+            },
+          },
+          {
+            in: "query",
+            name: "count",
+            description:
+              "The number of entities to be returned. If omitted, all entities known to the service will be returned (maximum: 10000).",
+            required: false,
+            schema: {
+              type: "number",
+              example: 5,
             },
           },
         ],
@@ -55,42 +63,7 @@ export const openapiDocument: OpenAPIV3.Document = {
             content: {
               "application/json": {
                 schema: {
-                  type: "array",
-                  items: {
-                    $ref: "#/components/schemas/Stock",
-                  },
-                },
-              },
-            },
-          },
-          "404": {
-            description: "Stock Entity not found",
-            content: {
-              "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/Error",
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    "/api/stock/list": {
-      get: {
-        summary: "Stock List API",
-        description: "Get a list of all stock entity IDs known to the service",
-        responses: {
-          "200": {
-            description: "OK",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                    example: "01FJYWEYRHYFT8YTEGQBABJ43J",
-                  },
+                  $ref: "#/components/schemas/StockListWithCount",
                 },
               },
             },
@@ -118,6 +91,7 @@ export const openapiDocument: OpenAPIV3.Document = {
           {
             in: "path",
             name: "entityID",
+            description: "The entity ID of the stock to be deleted.",
             required: true,
             schema: {
               type: "string",
@@ -149,6 +123,8 @@ export const openapiDocument: OpenAPIV3.Document = {
     schemas: {
       Country: {
         type: "string",
+        description:
+          "The 2-letter ISO 3166-1 country code of the country the stock is based in.",
         enum: [
           "AF",
           "AX",
@@ -403,6 +379,7 @@ export const openapiDocument: OpenAPIV3.Document = {
       },
       Industry: {
         type: "string",
+        description: "The main industry the company operates in.",
         enum: [
           "AgriculturalInputs",
           "BuildingMaterials",
@@ -554,16 +531,19 @@ export const openapiDocument: OpenAPIV3.Document = {
       },
       Size: {
         type: "string",
+        description: "The size of the company.",
         enum: ["Large", "Mid", "Small"],
         example: "Large",
       },
       Style: {
         type: "string",
+        description: "The style of the stock.",
         enum: ["Value", "Blend", "Growth"],
         example: "Growth",
       },
       Stock: {
         type: "object",
+        description: "A stock.",
         properties: {
           ticker: {
             type: "string",
@@ -584,6 +564,24 @@ export const openapiDocument: OpenAPIV3.Document = {
           },
           style: {
             $ref: "#/components/schemas/Style",
+          },
+        },
+      },
+      StockListWithCount: {
+        type: "object",
+        description:
+          "A stock list accompanied with the total number of available stocks",
+        properties: {
+          stocks: {
+            type: "array",
+            description: "The list of requested stocks.",
+            items: {
+              $ref: "#/components/schemas/Stock",
+            },
+          },
+          count: {
+            type: "number",
+            description: "The total number of available stocks.",
           },
         },
       },
