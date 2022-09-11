@@ -25,16 +25,16 @@ const server = new Server();
 const highlightMethod = (method: string) => {
   switch (method) {
     case "GET":
-      return chalk.bgBlue(method);
+      return chalk.whiteBright.bgBlue(method);
 
     case "POST":
-      return chalk.bgGreen(method);
+      return chalk.whiteBright.bgGreen(method);
 
     case "PUT":
-      return chalk.bgYellow(method);
+      return chalk.black.bgYellow(method);
 
     case "DELETE":
-      return chalk.bgRed(method);
+      return chalk.whiteBright.bgRed(method);
 
     default:
       return method;
@@ -45,15 +45,15 @@ const statusCodeDescription = (statusCode: number) => {
   const statusCodeString = `${statusCode} ${STATUS_CODES[statusCode]}`;
   switch (Math.floor(statusCode / 100)) {
     case 2:
-      return chalk.bgGreen(statusCodeString);
+      return chalk.whiteBright.bgGreen(statusCodeString);
 
     case 1:
     case 3:
-      return chalk.bgYellow(statusCodeString);
+      return chalk.black.bgYellow(statusCodeString);
 
     case 4:
     case 5:
-      return chalk.bgRed(statusCodeString);
+      return chalk.whiteBright.bgRed(statusCodeString);
   }
   return statusCodeString;
 };
