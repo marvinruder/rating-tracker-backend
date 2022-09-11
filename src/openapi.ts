@@ -1,152 +1,155 @@
-{
-  "openapi": "3.0.0",
-  "info": {
-    "title": "rating-tracker-backend",
-    "version": "0.1.0",
-    "contact": {
-      "name": "Marvin A. Ruder",
-      "email": "info@mruder.dev"
+import { OpenAPIV3 } from "express-openapi-validator/dist/framework/types.js";
+
+export const openapiDocument: OpenAPIV3.Document = {
+  openapi: "3.0.0",
+  info: {
+    title: "rating-tracker-backend",
+    version: "0.1.0",
+    contact: {
+      name: "Marvin A. Ruder",
+      email: "info@mruder.dev",
     },
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
+    license: {
+      name: "MIT",
+      url: "https://opensource.org/licenses/MIT",
     },
-    "description": "Specification JSONs: [v3](/api-spec/v3)."
+    description: "Specification JSONs: [v3](/api-spec/v3).",
   },
-  "servers": [
+  servers: [
     {
-      "url": "http://localhost:3001/",
-      "description": "Local server"
+      url: "http://localhost:3001/",
+      description: "Local server",
     },
     {
-      "url": "https://ratingtracker-snapshot.mruder.dev",
-      "description": "Snapshot server"
+      url: "https://ratingtracker-snapshot.mruder.dev",
+      description: "Snapshot server",
     },
     {
-      "url": "https://ratingtracker.mruder.dev",
-      "description": "Production server"
-    }
+      url: "https://ratingtracker.mruder.dev",
+      description: "Production server",
+    },
   ],
-  "paths": {
+  paths: {
     "/api/stock/details/{entityID}": {
-      "get": {
-        "summary": "Stock Details API",
-        "description": "Get a list of the specified stocks with all available attributes",
-        "parameters": [
+      get: {
+        summary: "Stock Details API",
+        description:
+          "Get a list of the specified stocks with all available attributes",
+        parameters: [
           {
-            "in": "path",
-            "name": "entityID",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "example": "01FJYWEYRHYFT8YTEGQBABJ43J"
-              }
-            }
-          }
+            in: "path",
+            name: "entityID",
+            required: true,
+            schema: {
+              type: "array",
+              items: {
+                type: "string",
+                example: "01FJYWEYRHYFT8YTEGQBABJ43J",
+              },
+            },
+          },
         ],
-        "responses": {
+        responses: {
           "200": {
-            "description": "OK",
-            "content": {
+            description: "OK",
+            content: {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Stock"
-                  }
-                }
-              }
-            }
+                schema: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/Stock",
+                  },
+                },
+              },
+            },
           },
           "404": {
-            "description": "Stock Entity not found",
-            "content": {
+            description: "Stock Entity not found",
+            content: {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+        },
+      },
     },
     "/api/stock/list": {
-      "get": {
-        "summary": "Stock List API",
-        "description": "Get a list of all stock entity IDs known to the service",
-        "responses": {
+      get: {
+        summary: "Stock List API",
+        description: "Get a list of all stock entity IDs known to the service",
+        responses: {
           "200": {
-            "description": "OK",
-            "content": {
+            description: "OK",
+            content: {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "example": "01FJYWEYRHYFT8YTEGQBABJ43J"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                schema: {
+                  type: "array",
+                  items: {
+                    type: "string",
+                    example: "01FJYWEYRHYFT8YTEGQBABJ43J",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     "/api/stock/fillWithExampleData": {
-      "put": {
-        "summary": "Stock Example Data API",
-        "description": "Fills the connected data service with example stocks",
-        "responses": {
+      put: {
+        summary: "Stock Example Data API",
+        description: "Fills the connected data service with example stocks",
+        responses: {
           "201": {
-            "description": "Created",
-            "content": {}
-          }
-        }
-      }
+            description: "Created",
+            content: {},
+          },
+        },
+      },
     },
     "/api/stock/{entityID}": {
-      "delete": {
-        "summary": "Delete Stock API",
-        "description": "Delete the specified stock",
-        "parameters": [
+      delete: {
+        summary: "Delete Stock API",
+        description: "Delete the specified stock",
+        parameters: [
           {
-            "in": "path",
-            "name": "entityID",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "01FJYWEYRHYFT8YTEGQBABJ43J"
-            }
-          }
+            in: "path",
+            name: "entityID",
+            required: true,
+            schema: {
+              type: "string",
+              example: "01FJYWEYRHYFT8YTEGQBABJ43J",
+            },
+          },
         ],
-        "responses": {
+        responses: {
           "204": {
-            "description": "No Content",
-            "content": {}
+            description: "No Content",
+            content: {},
           },
           "404": {
-            "description": "Stock Entity not found",
-            "content": {
+            description: "Stock Entity not found",
+            content: {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
-  "tags": [],
-  "components": {
-    "schemas": {
-      "Country": {
-        "type": "string",
-        "enum": [
+  tags: [],
+  components: {
+    schemas: {
+      Country: {
+        type: "string",
+        enum: [
           "AF",
           "AX",
           "AL",
@@ -394,13 +397,13 @@
           "EH",
           "YE",
           "ZM",
-          "ZW"
+          "ZW",
         ],
-        "example": "US"
+        example: "US",
       },
-      "Industry": {
-        "type": "string",
-        "enum": [
+      Industry: {
+        type: "string",
+        enum: [
           "AgriculturalInputs",
           "BuildingMaterials",
           "Chemicals",
@@ -545,54 +548,58 @@
           "ScientificTechnicalInstruments",
           "SemiconductorEquipmentMaterials",
           "Semiconductors",
-          "Solar"
+          "Solar",
         ],
-        "example": "ConsumerElectronics"
+        example: "ConsumerElectronics",
       },
-      "Size": {
-        "type": "string",
-        "enum": ["Large", "Mid", "Small"],
-        "example": "Large"
+      Size: {
+        type: "string",
+        enum: ["Large", "Mid", "Small"],
+        example: "Large",
       },
-      "Style": {
-        "type": "string",
-        "enum": ["Value", "Blend", "Growth"],
-        "example": "Growth"
+      Style: {
+        type: "string",
+        enum: ["Value", "Blend", "Growth"],
+        example: "Growth",
       },
-      "Stock": {
-        "properties": {
-          "ticker": {
-            "type": "string",
-            "example": "AAPL"
+      Stock: {
+        type: "object",
+        properties: {
+          ticker: {
+            type: "string",
+            example: "AAPL",
           },
-          "name": {
-            "type": "string",
-            "example": "Apple Inc."
+          name: {
+            type: "string",
+            example: "Apple Inc.",
           },
-          "country": {
-            "$ref": "#/components/schemas/Country"
+          country: {
+            $ref: "#/components/schemas/Country",
           },
-          "industry": {
-            "$ref": "#/components/schemas/Industry"
+          industry: {
+            $ref: "#/components/schemas/Industry",
           },
-          "size": {
-            "$ref": "#/components/schemas/Size"
+          size: {
+            $ref: "#/components/schemas/Size",
           },
-          "style": {
-            "$ref": "#/components/schemas/Style"
-          }
-        }
+          style: {
+            $ref: "#/components/schemas/Style",
+          },
+        },
       },
-      "Error": {
-        "properties": {
-          "message": {
-            "type": "string"
+      Error: {
+        type: "object",
+        properties: {
+          message: {
+            type: "string",
           },
-          "errors": {
-            "type": "string"
-          }
-        }
-      }
-    }
-  }
-}
+          errors: {
+            type: "string",
+          },
+        },
+      },
+    },
+  },
+};
+
+export default openapiDocument;

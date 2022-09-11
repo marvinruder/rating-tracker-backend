@@ -1,8 +1,8 @@
-import { Country } from "./enums/country";
-import { Industry } from "./enums/industry";
-import { Size } from "./enums/size";
-import { Style } from "./enums/style";
-import { Stock } from "./models/stock";
+import { Country } from "./enums/country.js";
+import { Industry } from "./enums/industry.js";
+import { Size } from "./enums/size.js";
+import { Style } from "./enums/style.js";
+import { Stock } from "./models/stock.js";
 
 const exampleStocks: Stock[] = [
   {

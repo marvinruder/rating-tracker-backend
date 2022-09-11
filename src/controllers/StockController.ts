@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import exampleStocks from "src/exampleStocks";
+import exampleStocks from "../exampleStocks.js";
 import {
   createStockWithoutReindexing,
   deleteStock,
   readAllStocks,
   readStocks,
-  reindexStockRepository,
-} from "src/redis/repositories/stockRepository";
+  indexStockRepository,
+} from "../redis/repositories/stockRepository.js";
 
 class StockController {
   async getList(res: Response) {
@@ -21,7 +21,7 @@ class StockController {
     for (const stock of exampleStocks) {
       await createStockWithoutReindexing(stock);
     }
-    reindexStockRepository();
+    indexStockRepository();
     return res.status(201).end();
   }
 

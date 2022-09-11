@@ -9,6 +9,6 @@ dotenv.config({
 const url = process.env.REDIS_URL || "redis://redis:6379";
 
 /* create and open the Redis OM Client */
-const client = async () => await new Client().open(url);
+const client = await new Client().open(url);
 
 export default client;

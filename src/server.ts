@@ -1,13 +1,13 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import MainRouter from "./routers/Router";
+import MainRouter from "./routers/Router.js";
 import SwaggerUI from "swagger-ui-express";
-import swaggerDocument from "./openapi.json";
+import openapiDocument from "./openapi.js";
 import * as OpenApiValidator from "express-openapi-validator";
-import { OpenAPIV3 } from "express-openapi-validator/dist/framework/types";
-import { getStockRepository } from "./redis/repositories/stockRepository";
 import chalk from "chalk";
+import responseTime from "response-time";
+import { STATUS_CODES } from "http";
 
 dotenv.config({
   path: ".env.local",
@@ -41,27 +41,48 @@ const highlightMethod = (method: string) => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-server.app.use((req, res, next) => {
-  console.log(
-    chalk.blue(
-      new Date().toISOString(),
-      req.headers["x-forwarded-for"] || req.socket.remoteAddress,
-      req.headers.host,
-      highlightMethod(req.method),
-      req.url,
-      JSON.stringify(req.params)
-    )
-  );
-  next();
-});
+const statusCodeDescription = (statusCode: number) => {
+  const statusCodeString = `${statusCode} ${STATUS_CODES[statusCode]}`;
+  switch (Math.floor(statusCode / 100)) {
+    case 2:
+      return chalk.bgGreen(statusCodeString);
 
-server.app.use("/api-docs", SwaggerUI.serve, SwaggerUI.setup(swaggerDocument));
-server.app.get("/api-spec/v3", (req, res) => res.json(swaggerDocument));
+    case 1:
+    case 3:
+      return chalk.bgYellow(statusCodeString);
+
+    case 4:
+    case 5:
+      return chalk.bgRed(statusCodeString);
+  }
+  return statusCodeString;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+server.app.use(
+  responseTime((req, res, time) => {
+    console.log(
+      chalk.blue(
+        new Date().toISOString(),
+        req.headers["x-forwarded-for"] || req.socket.remoteAddress,
+        req.headers.host,
+        highlightMethod(req.method),
+        req.url,
+        JSON.stringify(req.params),
+        " – ",
+        statusCodeDescription(res.statusCode),
+        `after ${Math.round(time)} ms`
+      )
+    );
+  })
+);
+
+server.app.use("/api-docs", SwaggerUI.serve, SwaggerUI.setup(openapiDocument));
+server.app.get("/api-spec/v3", (req, res) => res.json(openapiDocument));
 
 server.app.use(
   OpenApiValidator.middleware({
-    apiSpec: swaggerDocument as unknown as OpenAPIV3.Document,
+    apiSpec: openapiDocument,
     validateRequests: true,
     validateResponses: true,
   })
@@ -84,5 +105,3 @@ server.app.use((err, req, res, next) => {
 server.app.listen(PORT, () =>
   console.log(chalk.green(`> Listening on port ${PORT}`))
 );
-
-getStockRepository();

@@ -1,27 +1,18 @@
-import { Repository } from "redis-om";
-import APIError from "src/apiError";
-import { Stock, StockEntity, stockSchema } from "src/models/stock";
-import client from "../Client";
+import APIError from "../../apiError.js";
+import { Stock, stockSchema } from "../../models/stock.js";
+import client from "../Client.js";
 import chalk from "chalk";
 
-let stockRepository: Repository<StockEntity>;
+console.log(
+  chalk.grey(
+    "Using Stock Repository for the first time, fetching and indexing."
+  )
+);
+export const stockRepository = client.fetchRepository(stockSchema);
+await stockRepository.createIndex();
+console.log(chalk.grey("Stock Repository is now fetched and indexed."));
 
-export const getStockRepository = async () => {
-  if (!stockRepository) {
-    console.log(
-      chalk.grey(
-        "Using Stock Repository for the first time, fetching and indexing."
-      )
-    );
-    stockRepository = (await client()).fetchRepository(stockSchema);
-    await stockRepository.createIndex();
-    console.log(chalk.grey("Stock Repository is now fetched and indexed."));
-  }
-  return stockRepository;
-};
-
-export const reindexStockRepository = async () => {
-  stockRepository = (await client()).fetchRepository(stockSchema);
+export const indexStockRepository = async () => {
   await stockRepository.createIndex();
   console.log(chalk.grey("Stock Repository is now freshly indexed."));
 };
@@ -56,7 +47,7 @@ export const createStockWithoutReindexing = async (stock: Stock) => {
 
 export const createStock = async (stock: Stock) => {
   await createStockWithoutReindexing(stock);
-  reindexStockRepository();
+  indexStockRepository();
 };
 
 export const readStock = async (entityID: string) => {
@@ -94,5 +85,5 @@ export const deleteStockWithoutReindexing = async (entityID: string) => {
 
 export const deleteStock = async (entityID: string) => {
   await deleteStockWithoutReindexing(entityID);
-  reindexStockRepository();
+  indexStockRepository();
 };

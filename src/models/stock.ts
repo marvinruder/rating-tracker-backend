@@ -1,8 +1,8 @@
 import { Entity, Schema } from "redis-om";
-import { Country } from "src/enums/country";
-import { Industry } from "src/enums/industry";
-import { Size } from "src/enums/size";
-import { Style } from "src/enums/style";
+import { Country } from "../enums/country.js";
+import { Industry } from "../enums/industry.js";
+import { Size } from "../enums/size.js";
+import { Style } from "../enums/style.js";
 
 export class Stock {
   ticker: string;
