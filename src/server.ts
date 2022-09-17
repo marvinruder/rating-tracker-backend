@@ -120,6 +120,7 @@ server.app.listen(PORT, () =>
       chalk.red.bgGrey("") +
       chalk.whiteBright.bgGrey(` \uf6ff ${PORT} `) +
       chalk.grey("") +
-      chalk.green(" Listening…")
+      chalk.green(" Listening…") +
+      "\n"
   )
 );
