@@ -22,7 +22,9 @@ class StockController {
     // Filtering
     if (req.query.name) {
       stocks = stocks.filter((stock) =>
-        stock.name.includes(req.query.name as string)
+        stock.name
+          .toLowerCase()
+          .includes((req.query.name as string).toLowerCase())
       );
     }
     if (req.query.country) {
