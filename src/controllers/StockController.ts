@@ -37,7 +37,7 @@ class StockController {
     }
     if (req.query.industry) {
       const industries = req.query.industry;
-      if (Array.isArray(industries)) {
+      if (typeof industries !== "string") {
         stocks = stocks.filter((stock) =>
           (industries as Industry[]).includes(stock.industry)
         );
@@ -46,13 +46,13 @@ class StockController {
     if (req.query.size) {
       const size = req.query.size;
       if (typeof size === "string") {
-        stocks = stocks.filter((stock) => size === stock.size);
+        stocks = stocks.filter((stock) => (size as Size) === stock.size);
       }
     }
     if (req.query.style) {
       const style = req.query.style;
       if (typeof style === "string") {
-        stocks = stocks.filter((stock) => style === stock.style);
+        stocks = stocks.filter((stock) => (style as Style) === stock.style);
       }
     }
 
