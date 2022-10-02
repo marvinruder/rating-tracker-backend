@@ -28,27 +28,31 @@ class StockController {
       );
     }
     if (req.query.country) {
-      const countries = req.query.country as Country[];
+      const countries = req.query.country;
       if (typeof countries !== "string") {
-        stocks = stocks.filter((stock) => countries.includes(stock.country));
+        stocks = stocks.filter((stock) =>
+          (countries as Country[]).includes(stock.country)
+        );
       }
     }
     if (req.query.industry) {
-      const industries = req.query.industry as Industry[];
+      const industries = req.query.industry;
       if (typeof industries !== "string") {
-        stocks = stocks.filter((stock) => industries.includes(stock.industry));
+        stocks = stocks.filter((stock) =>
+          (industries as Industry[]).includes(stock.industry)
+        );
       }
     }
     if (req.query.size) {
-      const size = req.query.size as Size;
+      const size = req.query.size;
       if (typeof size === "string") {
-        stocks = stocks.filter((stock) => size.includes(stock.size));
+        stocks = stocks.filter((stock) => size === stock.size);
       }
     }
     if (req.query.style) {
-      const style = req.query.style as Style;
+      const style = req.query.style;
       if (typeof style === "string") {
-        stocks = stocks.filter((stock) => style.includes(stock.style));
+        stocks = stocks.filter((stock) => style === stock.style);
       }
     }
 
