@@ -27,22 +27,22 @@ class StockController {
           .includes((req.query.name as string).toLowerCase())
       );
     }
-    if (req.query.country && Array.isArray(req.query.country)) {
+    if (req.query.country && typeof req.query.country !== "string") {
       stocks = stocks.filter((stock) =>
         (req.query.country as Country[]).includes(stock.country)
       );
     }
-    if (req.query.industry && Array.isArray(req.query.industry)) {
+    if (req.query.industry && typeof req.query.industry !== "string") {
       stocks = stocks.filter((stock) =>
         (req.query.industry as Industry[]).includes(stock.industry)
       );
     }
-    if (req.query.size) {
+    if (req.query.size && typeof req.query.size === "string") {
       stocks = stocks.filter((stock) =>
         (req.query.size as Size).includes(stock.size)
       );
     }
-    if (req.query.style) {
+    if (req.query.style && typeof req.query.style === "string") {
       stocks = stocks.filter((stock) =>
         (req.query.style as Style).includes(stock.style)
       );
