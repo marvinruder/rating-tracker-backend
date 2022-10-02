@@ -27,21 +27,29 @@ class StockController {
           .includes((req.query.name as string).toLowerCase())
       );
     }
-    if (req.query.country && typeof req.query.country !== "string") {
+    if (req.query.country) {
       const countries = req.query.country as Country[];
-      stocks = stocks.filter((stock) => countries.includes(stock.country));
+      if (typeof countries !== "string") {
+        stocks = stocks.filter((stock) => countries.includes(stock.country));
+      }
     }
-    if (req.query.industry && typeof req.query.industry !== "string") {
+    if (req.query.industry) {
       const industries = req.query.industry as Industry[];
-      stocks = stocks.filter((stock) => industries.includes(stock.industry));
+      if (typeof industries !== "string") {
+        stocks = stocks.filter((stock) => industries.includes(stock.industry));
+      }
     }
-    if (req.query.size && typeof req.query.size === "string") {
+    if (req.query.size) {
       const size = req.query.size as Size;
-      stocks = stocks.filter((stock) => size.includes(stock.size));
+      if (typeof size === "string") {
+        stocks = stocks.filter((stock) => size.includes(stock.size));
+      }
     }
-    if (req.query.style && typeof req.query.style === "string") {
+    if (req.query.style) {
       const style = req.query.style as Style;
-      stocks = stocks.filter((stock) => style.includes(stock.style));
+      if (typeof style === "string") {
+        stocks = stocks.filter((stock) => style.includes(stock.style));
+      }
     }
 
     // Counting
