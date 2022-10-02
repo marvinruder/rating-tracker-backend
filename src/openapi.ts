@@ -91,6 +91,8 @@ export const openapiDocument: OpenAPIV3.Document = {
             name: "country",
             description: "A list of countries used for searching.",
             required: false,
+            explode: false,
+            allowReserved: true,
             schema: {
               type: "array",
               items: {
@@ -103,6 +105,8 @@ export const openapiDocument: OpenAPIV3.Document = {
             name: "industry",
             description: "A list of industries used for searching.",
             required: false,
+            explode: false,
+            allowReserved: true,
             schema: {
               type: "array",
               items: {
@@ -116,10 +120,7 @@ export const openapiDocument: OpenAPIV3.Document = {
             description: "A list of sizes used for searching.",
             required: false,
             schema: {
-              type: "array",
-              items: {
-                $ref: "#/components/schemas/Size",
-              },
+              $ref: "#/components/schemas/Size",
             },
           },
           {
@@ -128,10 +129,7 @@ export const openapiDocument: OpenAPIV3.Document = {
             description: "A list of styles used for searching.",
             required: false,
             schema: {
-              type: "array",
-              items: {
-                $ref: "#/components/schemas/Style",
-              },
+              $ref: "#/components/schemas/Style",
             },
           },
         ],
