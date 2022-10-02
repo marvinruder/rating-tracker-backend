@@ -29,7 +29,7 @@ class StockController {
     }
     if (req.query.country) {
       const countries = req.query.country;
-      if (typeof countries !== "string") {
+      if (Array.isArray(countries)) {
         stocks = stocks.filter((stock) =>
           (countries as Country[]).includes(stock.country)
         );
@@ -37,7 +37,7 @@ class StockController {
     }
     if (req.query.industry) {
       const industries = req.query.industry;
-      if (typeof industries !== "string") {
+      if (Array.isArray(industries)) {
         stocks = stocks.filter((stock) =>
           (industries as Industry[]).includes(stock.industry)
         );
