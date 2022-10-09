@@ -2,6 +2,10 @@ import APIError from "../../apiError.js";
 import { Stock, stockSchema } from "../../models/stock.js";
 import client from "../Client.js";
 import chalk from "chalk";
+import { Country } from "../../enums/country.js";
+import { Industry } from "../../enums/industry.js";
+import { Size } from "../../enums/size.js";
+import { Style } from "../../enums/style.js";
 
 console.log(
   chalk.grey(
@@ -62,19 +66,18 @@ export const createStock = async (stock: Stock) => {
   indexStockRepository();
 };
 
-// export const readStock = async (entityID: string) => {
-//   return await readStocks([entityID]);
-// };
-
-// export const readStocks = async (entityIDs: string[]) => {
-//   return (await stockRepository.fetch(entityIDs)).map((stockEntity) => {
-//     const stock = new Stock(stockEntity);
-//     if (stock.ticker) {
-//       return stock;
-//     }
-//     throw new APIError(404, `Stock Entity ${stockEntity.entityId} not found.`);
-//   });
-// };
+export const readStock = async (ticker: string) => {
+  const stockEntity = await stockRepository
+    .search()
+    .where("ticker")
+    .equals(ticker)
+    .first();
+  if (stockEntity) {
+    return new Stock(stockEntity);
+  } else {
+    throw new APIError(404, `Stock with ticker ${ticker} not found.`);
+  }
+};
 
 export const readAllStocks = async () => {
   return await stockRepository.search().return.all();
@@ -84,22 +87,51 @@ export const readStockCount = async () => {
   return await stockRepository.search().count();
 };
 
-export const deleteStockWithoutReindexing = async (entityID: string) => {
-  const stockEntity = await stockRepository.fetch(entityID);
-  const stock = new Stock(stockEntity);
-  if (stock.ticker) {
-    await stockRepository.remove(entityID);
-    console.log(
-      chalk.greenBright(
-        `Deleted stock “${stock.name}” with entity ID ${entityID}.`
-      )
-    );
+export const updateStock = async (
+  ticker: string,
+  updatedValues: {
+    country?: Country;
+    industry?: Industry;
+    size?: Size;
+    style?: Style;
+    morningstarId?: string;
+  }
+) => {
+  const stockEntity = await stockRepository
+    .search()
+    .where("ticker")
+    .equals(ticker)
+    .first();
+  if (stockEntity) {
+    stockEntity.country = updatedValues.country ?? null;
+    stockEntity.industry = updatedValues.industry ?? null;
+    stockEntity.size = updatedValues.size ?? null;
+    stockEntity.style = updatedValues.style ?? null;
+    stockEntity.morningstarId = updatedValues.morningstarId ?? null;
+    await stockRepository.save(stockEntity);
   } else {
-    throw new APIError(404, `Stock Entity ${entityID} not found.`);
+    throw new APIError(404, `Stock with ticker ${ticker} not found.`);
   }
 };
 
-export const deleteStock = async (entityID: string) => {
-  await deleteStockWithoutReindexing(entityID);
+export const deleteStockWithoutReindexing = async (ticker: string) => {
+  const stockEntity = await stockRepository
+    .search()
+    .where("ticker")
+    .equals(ticker)
+    .first();
+  if (stockEntity) {
+    const name = new Stock(stockEntity).name;
+    await stockRepository.remove(stockEntity.entityId);
+    console.log(
+      chalk.greenBright(`Deleted stock “${name}” (ticker ${ticker}).`)
+    );
+  } else {
+    throw new APIError(404, `Stock with ticker ${ticker} not found.`);
+  }
+};
+
+export const deleteStock = async (ticker: string) => {
+  await deleteStockWithoutReindexing(ticker);
   indexStockRepository();
 };

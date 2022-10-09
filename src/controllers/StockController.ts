@@ -11,7 +11,7 @@ import { Industry } from "../enums/industry.js";
 import { Country } from "../enums/country.js";
 import { Size } from "../enums/size.js";
 import { Style } from "../enums/style.js";
-import { SortableAttribute } from "src/types.js";
+import { SortableAttribute } from "../types.js";
 
 class StockController {
   async getList(req: Request, res: Response) {

@@ -6,6 +6,15 @@ import { Stock } from "./models/stock.js";
 
 const exampleStocks: Stock[] = [
   {
+    ticker: "exampleNULL",
+    name: "Null Inc.",
+  },
+  {
+    ticker: "IBM",
+    name: "International Business Machines Corp",
+    morningstarId: "0P000002RH",
+  },
+  {
     ticker: "exampleAAPL",
     name: "Apple Inc.",
     country: Country.US,
