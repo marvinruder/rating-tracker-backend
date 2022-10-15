@@ -5,9 +5,14 @@ import { Industry } from "../enums/industry.js";
 import APIError from "../apiError.js";
 import { Stock } from "../models/stock.js";
 import {
+  indexStockRepository,
   readAllStocks,
   readStock,
+  updateStockWithoutReindexing,
 } from "../redis/repositories/stockRepository.js";
+import { Size } from "../enums/size.js";
+import { Style } from "../enums/style.js";
+import chalk from "chalk";
 
 class FetchController {
   getDriver() {
@@ -34,7 +39,7 @@ class FetchController {
         if (!stocks[0].morningstarId) {
           throw new APIError(
             404,
-            `Stock with ticker ${ticker} does not have a Morningstar ID.`
+            `Stock ${ticker} does not have a Morningstar ID.`
           );
         }
       }
@@ -44,36 +49,147 @@ class FetchController {
       );
     }
 
+    stocks = stocks.filter((stock) => stock.morningstarId);
+    if (stocks.length === 0) {
+      return res.status(204).end();
+    }
+    const updatedStocks: Stock[] = [];
     const driver = this.getDriver();
+    for await (const stock of stocks) {
+      let industry: Industry;
+      let size: Size;
+      let style: Style;
+      let starRating: number;
+      let dividendYieldPercent: number;
+      let priceEarningRatio: number;
 
-    try {
-      stocks = stocks.filter((stock) => stock.morningstarId);
-      for await (const stock of stocks) {
+      try {
         await driver.get(
           `https://tools.morningstar.co.uk/uk/stockreport/default.aspx?Site=us&id=${stock.morningstarId}&LanguageId=en-US&SecurityToken=${stock.morningstarId}]3]0]E0WWE$$ALL`
         );
 
-        const industry = (
-          await driver
-            .findElement(
-              By.xpath(
-                "//*/div[@id='CompanyProfile']/div/h3[contains(text(), 'Industry')]/.."
+        try {
+          industry =
+            Industry[
+              (
+                await driver
+                  .findElement(
+                    By.xpath(
+                      "//*/div[@id='CompanyProfile']/div/h3[contains(text(), 'Industry')]/.."
+                    )
+                  )
+                  .getText()
               )
+                .replace("Industry\n", "")
+                .replaceAll(/[^a-zA-Z0-9]/g, "")
+            ];
+        } catch (e) {
+          console.warn(
+            chalk.yellowBright(
+              `Stock ${stock.ticker}: Unable to extract industry: ${e.message}`
             )
-            .getText()
-        ).replace("Industry\n", "") as Industry;
+          );
+        }
 
-        const starRating = (
-          await driver
-            .findElement(By.xpath("//*/img[@class='starsImg']"))
-            .getAttribute("alt")
-        ).replaceAll(/\D/g, "");
+        try {
+          const sizeAndStyle = (
+            await driver
+              .findElement(
+                By.xpath(
+                  "//*/div[@id='CompanyProfile']/div/h3[contains(text(), 'Stock Style')]/.."
+                )
+              )
+              .getText()
+          )
+            .replace("Stock Style\n", "")
+            .split("-");
+          size = Size[sizeAndStyle[0]];
+          style = Style[sizeAndStyle[1]];
+        } catch (e) {
+          console.warn(
+            chalk.yellowBright(
+              `Stock ${stock.ticker}: Unable to extract size and style: ${e.message}`
+            )
+          );
+        }
+
+        try {
+          starRating = +(
+            await driver
+              .findElement(By.xpath("//*/img[@class='starsImg']"))
+              .getAttribute("alt")
+          ).replaceAll(/\D/g, "");
+          if (isNaN(starRating)) {
+            starRating = 0;
+          }
+        } catch (e) {
+          console.warn(
+            chalk.yellowBright(
+              `Stock ${stock.ticker}: Unable to extract star rating: ${e.message}`
+            )
+          );
+        }
+
+        try {
+          dividendYieldPercent = +(await driver
+            .findElement(By.id("Col0Yield"))
+            .getText());
+          if (isNaN(dividendYieldPercent)) {
+            dividendYieldPercent = 0;
+          }
+        } catch (e) {
+          console.warn(
+            chalk.yellowBright(
+              `Stock ${stock.ticker}: Unable to extract dividend yield: ${e.message}`
+            )
+          );
+        }
+
+        try {
+          priceEarningRatio = +(await driver
+            .findElement(By.id("Col0PE"))
+            .getText());
+          if (isNaN(priceEarningRatio)) {
+            priceEarningRatio = 0;
+          }
+        } catch (e) {
+          console.warn(
+            chalk.yellowBright(
+              `Stock ${stock.ticker}: Unable to extract price earning ratio: ${e.message}`
+            )
+          );
+        }
+
+        await updateStockWithoutReindexing(stock.ticker, {
+          industry: industry,
+          size: size,
+          style: style,
+          starRating: starRating,
+          dividendYieldPercent: dividendYieldPercent,
+          priceEarningRatio: priceEarningRatio,
+        });
+        updatedStocks.push(await readStock(stock.ticker));
+      } catch (e) {
+        if (req.query.ticker) {
+          throw new APIError(
+            502,
+            `Stock ${stock.ticker}: Unable to fetch Morningstar information: ${e.message}`
+          );
+        }
+        console.warn(
+          chalk.yellowBright(
+            `Stock ${stock.ticker}: Unable to fetch Morningstar information: ${e.message}`
+          )
+        );
       }
-    } finally {
-      await driver.quit();
     }
-
-    return res.status(204).end();
+    await driver.quit();
+    if (updatedStocks.length === 0) {
+      return res.status(204).end();
+    } else {
+      indexStockRepository();
+      return res.status(200).json(updatedStocks);
+    }
   }
 }
 

@@ -173,7 +173,7 @@ export const openapiDocument: OpenAPIV3.Document = {
             required: true,
             schema: {
               type: "string",
-              example: "01FJYWEYRHYFT8YTEGQBABJ43J",
+              example: "AAPL",
             },
           },
         ],
@@ -214,12 +214,35 @@ export const openapiDocument: OpenAPIV3.Document = {
           },
         ],
         responses: {
+          "200": {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/Stock",
+                  },
+                },
+              },
+            },
+          },
           "204": {
             description: "No Content",
             content: {},
           },
           "404": {
             description: "Stock not found",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+          "502": {
+            description: "Unable to fetch",
             content: {
               "application/json": {
                 schema: {
@@ -685,7 +708,14 @@ export const openapiDocument: OpenAPIV3.Document = {
       SortableAttribute: {
         type: "string",
         description: "The name of an attribute whose values can be sorted.",
-        enum: ["name", "size", "style"],
+        enum: [
+          "name",
+          "size",
+          "style",
+          "starRating",
+          "dividendYieldPercent",
+          "priceEarningRatio",
+        ],
         example: "name",
       },
       StockListWithCount: {

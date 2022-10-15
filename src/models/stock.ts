@@ -12,6 +12,9 @@ export class Stock {
   size?: Size;
   style?: Style;
   morningstarId?: string;
+  starRating?: number;
+  dividendYieldPercent?: number;
+  priceEarningRatio?: number;
 
   constructor(stockEntity: StockEntity) {
     this.ticker = stockEntity.ticker;
@@ -31,6 +34,15 @@ export class Stock {
     if (stockEntity.morningstarId != null) {
       this.morningstarId = stockEntity.morningstarId;
     }
+    if (stockEntity.starRating != null) {
+      this.starRating = stockEntity.starRating;
+    }
+    if (stockEntity.dividendYieldPercent != null) {
+      this.dividendYieldPercent = stockEntity.dividendYieldPercent;
+    }
+    if (stockEntity.priceEarningRatio != null) {
+      this.priceEarningRatio = stockEntity.priceEarningRatio;
+    }
   }
 
   static toJSON = (stock: Stock) => {
@@ -42,6 +54,9 @@ export class Stock {
       size: stock.size as string,
       style: stock.style as string,
       morningstarId: stock.morningstarId,
+      starRating: stock.starRating,
+      dividendYieldPercent: stock.dividendYieldPercent,
+      priceEarningRatio: stock.priceEarningRatio,
     };
   };
 }
@@ -54,6 +69,9 @@ export interface StockEntity {
   size: string;
   style: string;
   morningstarId: string;
+  starRating: number;
+  dividendYieldPercent: number;
+  priceEarningRatio: number;
 }
 
 export class StockEntity extends Entity {}
@@ -66,4 +84,7 @@ export const stockSchema = new Schema(StockEntity, {
   size: { type: "string" },
   style: { type: "string" },
   morningstarId: { type: "string" },
+  starRating: { type: "number" },
+  dividendYieldPercent: { type: "number" },
+  priceEarningRatio: { type: "number" },
 });

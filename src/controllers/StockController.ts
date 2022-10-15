@@ -81,6 +81,20 @@ class StockController {
               [Style.Value, Style.Blend, Style.Growth].indexOf(b.style)
           );
           break;
+        case "starRating":
+          stocks.sort((a, b) => (a.starRating ?? 0) - (b.starRating ?? 0));
+          break;
+        case "dividendYieldPercent":
+          stocks.sort(
+            (a, b) =>
+              (a.dividendYieldPercent ?? 0) - (b.dividendYieldPercent ?? 0)
+          );
+          break;
+        case "priceEarningRatio":
+          stocks.sort(
+            (a, b) => (a.priceEarningRatio ?? 0) - (b.priceEarningRatio ?? 0)
+          );
+          break;
       }
       if (String(req.query.sortDesc).toLowerCase() === "true") {
         stocks.reverse();

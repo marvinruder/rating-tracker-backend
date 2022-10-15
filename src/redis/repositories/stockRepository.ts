@@ -75,7 +75,7 @@ export const readStock = async (ticker: string) => {
   if (stockEntity) {
     return new Stock(stockEntity);
   } else {
-    throw new APIError(404, `Stock with ticker ${ticker} not found.`);
+    throw new APIError(404, `Stock ${ticker} not found.`);
   }
 };
 
@@ -87,7 +87,7 @@ export const readStockCount = async () => {
   return await stockRepository.search().count();
 };
 
-export const updateStock = async (
+export const updateStockWithoutReindexing = async (
   ticker: string,
   updatedValues: {
     country?: Country;
@@ -95,6 +95,9 @@ export const updateStock = async (
     size?: Size;
     style?: Style;
     morningstarId?: string;
+    starRating?: number;
+    dividendYieldPercent?: number;
+    priceEarningRatio?: number;
   }
 ) => {
   const stockEntity = await stockRepository
@@ -103,15 +106,103 @@ export const updateStock = async (
     .equals(ticker)
     .first();
   if (stockEntity) {
-    stockEntity.country = updatedValues.country ?? null;
-    stockEntity.industry = updatedValues.industry ?? null;
-    stockEntity.size = updatedValues.size ?? null;
-    stockEntity.style = updatedValues.style ?? null;
-    stockEntity.morningstarId = updatedValues.morningstarId ?? null;
-    await stockRepository.save(stockEntity);
+    console.log(chalk.greenBright(`Updating stock ${ticker}…`));
+    let isNewData = false;
+    if (
+      updatedValues.country &&
+      updatedValues.country !== stockEntity.country
+    ) {
+      isNewData = true;
+      stockEntity.country = updatedValues.country;
+      console.log(chalk.greenBright(`    Country: ${updatedValues.country}`));
+    }
+    if (
+      updatedValues.industry &&
+      updatedValues.industry !== stockEntity.industry
+    ) {
+      isNewData = true;
+      stockEntity.industry = updatedValues.industry;
+      console.log(chalk.greenBright(`    Industry: ${updatedValues.industry}`));
+    }
+    if (updatedValues.size && updatedValues.size !== stockEntity.size) {
+      isNewData = true;
+      stockEntity.size = updatedValues.size;
+      console.log(chalk.greenBright(`    Size: ${updatedValues.size}`));
+    }
+    if (updatedValues.style && updatedValues.style !== stockEntity.style) {
+      isNewData = true;
+      stockEntity.style = updatedValues.style;
+      console.log(chalk.greenBright(`    Style: ${updatedValues.style}`));
+    }
+    if (
+      updatedValues.morningstarId &&
+      updatedValues.morningstarId !== stockEntity.morningstarId
+    ) {
+      isNewData = true;
+      stockEntity.morningstarId = updatedValues.morningstarId;
+      console.log(
+        chalk.greenBright(`    Morningstar ID: ${updatedValues.morningstarId}`)
+      );
+    }
+    if (
+      updatedValues.starRating &&
+      updatedValues.starRating !== stockEntity.starRating
+    ) {
+      isNewData = true;
+      stockEntity.starRating = updatedValues.starRating;
+      console.log(
+        chalk.greenBright(`    Star Rating: ${updatedValues.starRating}`)
+      );
+    }
+    if (
+      updatedValues.dividendYieldPercent &&
+      updatedValues.dividendYieldPercent !== stockEntity.dividendYieldPercent
+    ) {
+      isNewData = true;
+      stockEntity.dividendYieldPercent = updatedValues.dividendYieldPercent;
+      console.log(
+        chalk.greenBright(
+          `    Dividend Yield (%): ${updatedValues.dividendYieldPercent}`
+        )
+      );
+    }
+    if (
+      updatedValues.priceEarningRatio &&
+      updatedValues.priceEarningRatio !== stockEntity.priceEarningRatio
+    ) {
+      isNewData = true;
+      stockEntity.priceEarningRatio = updatedValues.priceEarningRatio;
+      console.log(
+        chalk.greenBright(
+          `    Price Earning Ratio: ${updatedValues.priceEarningRatio}`
+        )
+      );
+    }
+    if (isNewData) {
+      await stockRepository.save(stockEntity);
+    } else {
+      console.log(chalk.grey(`No updates for stock ${ticker}.`));
+    }
   } else {
-    throw new APIError(404, `Stock with ticker ${ticker} not found.`);
+    throw new APIError(404, `Stock ${ticker} not found.`);
   }
+};
+
+export const updateStock = async (
+  ticker: string,
+  updatedValues: {
+    country?: Country;
+    industry?: Industry;
+    size?: Size;
+    style?: Style;
+    morningstarId?: string;
+    starRating?: number;
+    dividendYieldPercent?: number;
+    priceEarningRatio?: number;
+  }
+) => {
+  await updateStockWithoutReindexing(ticker, updatedValues);
+  indexStockRepository();
 };
 
 export const deleteStockWithoutReindexing = async (ticker: string) => {
@@ -127,7 +218,7 @@ export const deleteStockWithoutReindexing = async (ticker: string) => {
       chalk.greenBright(`Deleted stock “${name}” (ticker ${ticker}).`)
     );
   } else {
-    throw new APIError(404, `Stock with ticker ${ticker} not found.`);
+    throw new APIError(404, `Stock ${ticker} not found.`);
   }
 };
 
