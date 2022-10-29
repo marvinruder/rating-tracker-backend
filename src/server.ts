@@ -20,7 +20,7 @@ class Server {
   public router = MainRouter;
 }
 
-const server = new Server();
+export const server = new Server();
 
 const highlightMethod = (method: string) => {
   switch (method) {
@@ -64,9 +64,8 @@ server.app.use(
       chalk.whiteBright.bgRed(" \ue76d ") + chalk.red(""),
       new Date().toISOString(),
       req.headers["x-forwarded-for"] || req.socket.remoteAddress,
-      req.headers.host
-    );
-    console.log(
+      req.headers.host,
+      "\n",
       "├─",
       highlightMethod(req.method) +
         chalk.bgGrey(
@@ -80,14 +79,12 @@ server.app.use(
             .replaceAll("/", "  ")} `
         ) +
         chalk.grey(""),
-      JSON.stringify(req.query)
-    );
-    console.log(
+      JSON.stringify(req.query),
+      "\n",
       "╰─",
       statusCodeDescription(res.statusCode),
       `after ${Math.round(time)} ms`
     );
-    console.log();
   })
 );
 
@@ -114,7 +111,7 @@ server.app.use((err, req, res, next) => {
   });
 });
 
-server.app.listen(PORT, () =>
+export const listener = server.app.listen(PORT, () =>
   console.log(
     chalk.whiteBright.bgRed(" \ue76d ") +
       chalk.red.bgGrey("") +
