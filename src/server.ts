@@ -13,6 +13,7 @@ dotenv.config({
   path: ".env.local",
 });
 
+/* istanbul ignore next */
 const PORT = process.env.PORT || 3000;
 
 class Server {
@@ -22,6 +23,7 @@ class Server {
 
 export const server = new Server();
 
+/* istanbul ignore next */
 const highlightMethod = (method: string) => {
   switch (method) {
     case "GET":
@@ -41,6 +43,7 @@ const highlightMethod = (method: string) => {
   }
 };
 
+/* istanbul ignore next */
 const statusCodeDescription = (statusCode: number) => {
   const statusCodeString = ` ${statusCode}  ${STATUS_CODES[statusCode]} `;
   switch (Math.floor(statusCode / 100)) {
@@ -83,7 +86,8 @@ server.app.use(
       "\n",
       "╰─",
       statusCodeDescription(res.statusCode),
-      `after ${Math.round(time)} ms`
+      `after ${Math.round(time)} ms`,
+      "\n"
     );
   })
 );

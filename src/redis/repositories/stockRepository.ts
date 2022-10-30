@@ -82,9 +82,9 @@ export const updateStockWithoutReindexing = async (
             case "priceEarningRatio":
               stockEntity[k] = newValues[k];
               break;
-            default:
-              stockEntity[k] = newValues[k];
-              break;
+            // default:
+            //   stockEntity[k] = newValues[k];
+            //   break;
           }
         }
       }
@@ -101,7 +101,7 @@ export const updateStockWithoutReindexing = async (
 
 export const updateStock = async (
   ticker: string,
-  updatedValues: {
+  newValues: {
     country?: Country;
     industry?: Industry;
     size?: Size;
@@ -113,7 +113,7 @@ export const updateStock = async (
     priceEarningRatio?: number;
   }
 ) => {
-  await updateStockWithoutReindexing(ticker, updatedValues);
+  await updateStockWithoutReindexing(ticker, newValues);
   index();
 };
 
