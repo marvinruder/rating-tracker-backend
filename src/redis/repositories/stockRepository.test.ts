@@ -8,8 +8,13 @@ jest.unstable_mockModule(
 const { createStock, readStock, updateStock, deleteStock } = await import(
   "./stockRepository"
 );
+import dotenv from "dotenv";
 import { initMockRepository } from "./__mocks__/stockRepositoryBase";
 import { Stock } from "../../models/stock";
+
+dotenv.config({
+  path: ".env.local",
+});
 
 beforeAll((done) => {
   initMockRepository();

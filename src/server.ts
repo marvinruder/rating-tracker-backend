@@ -8,6 +8,7 @@ import * as OpenApiValidator from "express-openapi-validator";
 import chalk from "chalk";
 import responseTime from "response-time";
 import { STATUS_CODES } from "http";
+import { sendMessage } from "./signal.js";
 
 dotenv.config({
   path: ".env.local",
@@ -115,7 +116,7 @@ server.app.use((err, req, res, next) => {
   });
 });
 
-export const listener = server.app.listen(PORT, () =>
+export const listener = server.app.listen(PORT, () => {
   console.log(
     chalk.whiteBright.bgRed(" \ue76d ") +
       chalk.red.bgGrey("") +
@@ -123,5 +124,6 @@ export const listener = server.app.listen(PORT, () =>
       chalk.grey("") +
       chalk.green(" Listening…") +
       "\n"
-  )
-);
+  );
+  sendMessage("Rating Tracker is now online");
+});
