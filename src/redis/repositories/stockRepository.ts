@@ -3,7 +3,7 @@ import { Stock, StockEntity, stockSchema } from "../../models/stock.js";
 import { fetch, fetchAll, index, remove, save } from "./stockRepositoryBase.js";
 import chalk from "chalk";
 import { Country, Industry, Size, Style } from "../../types.js";
-import { sendMessage } from "../../signal.js";
+import { sendMessage } from "../../signal/signal.js";
 
 export const indexStockRepository = () => {
   index();
@@ -78,16 +78,16 @@ export const updateStockWithoutReindexing = async (
                 "☆".repeat(5 - newValues[k] ?? 0)
               }`;
               break;
-            case "dividendYieldPercent":
-              signalMessage += `\n\tDividend Yield changed from ${
-                stockEntity[k] ?? 0
-              } % to ${newValues[k] ?? 0} %`;
-              break;
-            case "priceEarningRatio":
-              signalMessage += `\n\tPrice/Earning ratio changed from ${
-                stockEntity[k] ?? 0
-              } to ${newValues[k] ?? 0}`;
-              break;
+            // case "dividendYieldPercent":
+            //   signalMessage += `\n\tDividend Yield changed from ${
+            //     stockEntity[k] ?? 0
+            //   } % to ${newValues[k] ?? 0} %`;
+            //   break;
+            // case "priceEarningRatio":
+            //   signalMessage += `\n\tPrice/Earning ratio changed from ${
+            //     stockEntity[k] ?? 0
+            //   } to ${newValues[k] ?? 0}`;
+            //   break;
             default:
               break;
           }
