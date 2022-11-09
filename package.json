@@ -12,7 +12,7 @@
     "node": "^19.0.0"
   },
   "scripts": {
-    "dev": "conc --kill-others \"tsc --watch\" \"node --watch dist/src/server.js\" -n \"ﯤ,\" -p \"{name}\" -c #3178C6,#339933 --timings",
+    "dev": "conc --kill-others \"ssh -N rating-tracker-port-forwarding\" \"tsc --watch\" \"node --watch dist/src/server.js\" -n \",ﯤ,\" -p \"{name}\" -c grey,#3178C6,#339933 --timings",
     "test:watch": "yarn node --experimental-vm-modules $(yarn bin jest) --watch --runInBand",
     "start": "node dist/src/server.js",
     "build": "tsc --project tsconfig.build.json",
