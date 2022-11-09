@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import * as cron from "cron";
 import dotenv from "dotenv";
 import express, { Request, Response } from "express";
@@ -10,6 +11,7 @@ import chalk from "chalk";
 import responseTime from "response-time";
 import { STATUS_CODES } from "http";
 import axios from "axios";
+import bodyParser from "body-parser";
 
 dotenv.config({
   path: ".env.local",
@@ -63,15 +65,37 @@ const statusCodeDescription = (statusCode: number) => {
   return statusCodeString;
 };
 
+server.app.use(cookieParser());
+server.app.use(bodyParser.json());
+
+server.app.use((req, res, next) => {
+  res.cookie("exampleCookie", "someValue", {
+    maxAge: 1000 * 60,
+    httpOnly: true,
+    secure: process.env.NODE_ENV != "dev",
+    sameSite: true,
+  });
+  next();
+});
+
 server.app.use(
   responseTime((req: Request, res: Response, time) => {
     console.log(
-      chalk.whiteBright.bgRed(" \ue76d ") + chalk.red(""),
-      new Date().toISOString(),
-      req.headers["x-forwarded-for"] || req.socket.remoteAddress,
-      req.headers.host,
-      "\n",
-      "├─",
+      chalk.whiteBright.bgRed(" \ue76d ") +
+        chalk.bgGrey.red("") +
+        chalk.bgGrey(
+          chalk.cyan(" \uf5ef " + new Date().toISOString()) +
+            "  " +
+            chalk.yellow(
+              "\uf007 " + // TODO use \uf21b for anonymous user
+                (req.headers["x-forwarded-for"] || req.socket.remoteAddress)
+            ) +
+            "  " +
+            chalk.magenta("\uf98c" + req.headers.host) +
+            " "
+        ) +
+        chalk.grey(""),
+      "\n ├─",
       highlightMethod(req.method) +
         chalk.bgGrey(
           ` ${req.originalUrl
@@ -84,9 +108,27 @@ server.app.use(
             .replaceAll("/", "  ")} `
         ) +
         chalk.grey(""),
-      JSON.stringify(req.query),
-      "\n",
-      "╰─",
+      Object.entries(req.cookies)
+        .map(
+          ([key, value]) =>
+            "\n ├─ " +
+            chalk.bgGrey(chalk.yellow(" \uf697") + `  ${key} `) +
+            chalk.grey("") +
+            " " +
+            value
+        )
+        .join(" "),
+      Object.entries(req.query)
+        .map(
+          ([key, value]) =>
+            "\n ├─ " +
+            chalk.bgGrey(chalk.cyan(" \uf002") + `  ${key} `) +
+            chalk.grey("") +
+            " " +
+            value
+        )
+        .join(" "),
+      "\n ╰─",
       statusCodeDescription(res.statusCode),
       `after ${Math.round(time)} ms`,
       "\n"

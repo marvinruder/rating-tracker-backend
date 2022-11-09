@@ -37,6 +37,190 @@ export const openapiDocument: OpenAPIV3.Document = {
     },
   ],
   paths: {
+    "/api/auth/register": {
+      get: {
+        tags: ["Authentication API"],
+        operationId: "getRegistrationOptions",
+        summary: "Get Registration Options API",
+        description:
+          "Get information required for registering a new user via WebAuthn standard",
+        parameters: [
+          {
+            in: "query",
+            name: "email",
+            description: "The email address of the new user, used as their ID",
+            required: true,
+            allowReserved: true,
+            schema: {
+              type: "string",
+              example: "user@example.com",
+            },
+          },
+          {
+            in: "query",
+            name: "name",
+            description: "The common name of the new user",
+            required: true,
+            allowReserved: true,
+            schema: {
+              type: "string",
+              example: "Jane Doe",
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                },
+              },
+            },
+          },
+          "400": {
+            description: "Bad Request",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+          "403": {
+            description: "Forbidden",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+        },
+      },
+      post: {
+        tags: ["Authentication API"],
+        operationId: "postRegistrationResponse",
+        summary: "Post Registration Response API",
+        description:
+          "Post the response for the WebAuthn registration challenge",
+        parameters: [
+          {
+            in: "query",
+            name: "email",
+            description: "The email address of the new user, used as their ID",
+            required: true,
+            allowReserved: true,
+            schema: {
+              type: "string",
+              example: "user@example.com",
+            },
+          },
+          {
+            in: "query",
+            name: "name",
+            description: "The common name of the new user",
+            required: true,
+            allowReserved: true,
+            schema: {
+              type: "string",
+              example: "Jane Doe",
+            },
+          },
+        ],
+        responses: {
+          "201": {
+            description: "Created",
+          },
+          "400": {
+            description: "Bad Request",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+          "403": {
+            description: "Forbidden",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/auth/signIn": {
+      get: {
+        tags: ["Authentication API"],
+        operationId: "getAuthenticationOptions",
+        summary: "Get Authentication Options API",
+        description:
+          "Get information required for authenticating as a registered user via WebAuthn standard",
+        responses: {
+          "200": {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                },
+              },
+            },
+          },
+          "400": {
+            description: "Bad Request",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+        },
+      },
+      post: {
+        tags: ["Authentication API"],
+        operationId: "postAuthenticationResponse",
+        summary: "Post Authentication Response API",
+        description:
+          "Post the response for the WebAuthn authentication challenge",
+        responses: {
+          "204": {
+            description: "No Content",
+          },
+          "400": {
+            description: "Bad Request",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+          "403": {
+            description: "Forbidden",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Error",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     "/api/stock/list": {
       get: {
         tags: ["Stock API"],

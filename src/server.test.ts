@@ -2,13 +2,14 @@ import { jest } from "@jest/globals";
 
 jest.unstable_mockModule(
   "./redis/repositories/stockRepositoryBase",
-  async () => await import("./redis/repositories/__mocks__/stockRepositoryBase")
+  async () =>
+    await import("./redis/repositories/stock/__mocks__/stockRepositoryBase")
 );
 
 const { listener, server } = await import("./server");
 import supertest from "supertest";
 import { Stock } from "./models/stock";
-import { initMockRepository } from "./redis/repositories/__mocks__/stockRepositoryBase";
+import { initMockRepository } from "./redis/repositories/stock/__mocks__/stockRepositoryBase";
 import { sortableAttributeArray } from "./types";
 
 const requestWithSupertest = supertest(server.app);
