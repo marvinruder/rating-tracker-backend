@@ -1,9 +1,19 @@
 import { jest } from "@jest/globals";
 
 jest.unstable_mockModule(
-  "./redis/repositories/stockRepositoryBase",
+  "./redis/repositories/stock/stockRepositoryBase",
   async () =>
     await import("./redis/repositories/stock/__mocks__/stockRepositoryBase")
+);
+jest.unstable_mockModule(
+  "./redis/repositories/session/sessionRepositoryBase",
+  async () =>
+    await import("./redis/repositories/session/__mocks__/sessionRepositoryBase")
+);
+jest.unstable_mockModule(
+  "./redis/repositories/user/userRepositoryBase",
+  async () =>
+    await import("./redis/repositories/user/__mocks__/userRepositoryBase")
 );
 
 const { listener, server } = await import("./server");
