@@ -75,7 +75,6 @@ const statusCodeDescription = (statusCode: number) => {
 server.app.use(cookieParser());
 server.app.use(express.json());
 
-// TODO implement access rights
 server.app.use(async (req, res, next) => {
   if (req.cookies.authToken) {
     try {
@@ -169,7 +168,7 @@ server.app.use(
   cors(),
   server.router.public,
   (_, res, next) => {
-    if (res.locals.user) {
+    if (res.locals.user && res.locals.user.accessRights > 0) {
       next();
     } else {
       throw new APIError(
