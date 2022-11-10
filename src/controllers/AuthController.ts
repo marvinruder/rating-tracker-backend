@@ -1,8 +1,10 @@
+const { randomUUID } = await import("node:crypto");
 import SimpleWebAuthnServer from "@simplewebauthn/server";
 import { AuthenticatorDevice } from "@simplewebauthn/typescript-types";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
 import { Buffer } from "node:buffer";
+import { createSession } from "../redis/repositories/session/sessionRepository.js";
 import { GENERAL_ACCESS } from "../accessRights.js";
 import APIError from "../apiError.js";
 import {
@@ -11,6 +13,7 @@ import {
   updateUser,
   userExists,
 } from "../redis/repositories/user/userRepository.js";
+import { sessionTTLInSeconds } from "../redis/repositories/session/sessionRepositoryBase.js";
 
 dotenv.config({
   path: ".env.local",
@@ -137,6 +140,14 @@ class AuthController {
         throw new APIError(403, "This user account is not yet activated.");
       }
       await updateUser(email, { counter: newCounter });
+      const authToken = randomUUID();
+      await createSession({ sessionID: authToken, email });
+      res.cookie("authToken", authToken, {
+        maxAge: 1000 * sessionTTLInSeconds,
+        httpOnly: true,
+        secure: process.env.NODE_ENV != "dev",
+        sameSite: true,
+      });
       return res.sendStatus(204);
     }
     throw new APIError(400, "Authentication failed");

@@ -4,13 +4,10 @@ import {
   SessionEntity,
   sessionSchema,
 } from "../../../models/session.js";
-import {
-  expire as renew,
-  fetch,
-  remove,
-  save,
-} from "./sessionRepositoryBase.js";
+import { refresh, fetch, remove, save } from "./sessionRepositoryBase.js";
 import chalk from "chalk";
+import { User } from "../../../models/user.js";
+import { readUser } from "../user/userRepository.js";
 
 export const createSession = async (session: Session): Promise<boolean> => {
   const existingSession = await fetch(session.sessionID);
@@ -32,17 +29,17 @@ export const createSession = async (session: Session): Promise<boolean> => {
       )}.`
     )
   );
-  await renew(session.sessionID);
+  await refresh(session.sessionID);
   return true;
 };
 
-export const renewSession = async (sessionID: string) => {
+export const refreshSession = async (sessionID: string): Promise<User> => {
   const sessionEntity = await fetch(sessionID);
   if (sessionEntity && sessionEntity.email) {
-    renew(sessionID);
-  } else {
-    throw new APIError(404, `Session ${sessionID} not found.`);
+    refresh(sessionID);
+    return await readUser(sessionEntity.email);
   }
+  throw new APIError(404, `Session ${sessionID} not found.`);
 };
 
 export const readSession = async (sessionID: string) => {
