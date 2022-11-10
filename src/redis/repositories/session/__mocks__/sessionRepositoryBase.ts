@@ -1,21 +1,27 @@
 /* istanbul ignore file */
-import { SessionEntity } from "../../../../models/session.js";
+import { SessionEntity, sessionSchema } from "../../../../models/session.js";
 
-const ttlInSeconds = 600;
+export const sessionTTLInSeconds = 600;
 
-let sessionRepository: Map<string, SessionEntity> = new Map<
-  string,
-  SessionEntity
->();
+let sessionRepository: Map<string, SessionEntity>;
 
+export const initSessionRepository = () => {
+  sessionRepository = new Map<string, SessionEntity>();
+  sessionRepository.set(
+    "exampleSessionID",
+    new SessionEntity(sessionSchema, "exampleSessionID", {
+      email: "jane.doe@example.com",
+    })
+  );
+};
 export const fetch = (id: string) => {
   return sessionRepository.get(id);
 };
 
-export const expire = (id: string) => {
+export const refresh = (id: string) => {
   setTimeout(() => {
     remove(id);
-  }, 1000 * ttlInSeconds);
+  }, 1000 * sessionTTLInSeconds);
 };
 
 export const save = (sessionEntity: SessionEntity) => {

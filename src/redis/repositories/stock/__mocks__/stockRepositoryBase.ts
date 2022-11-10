@@ -5,7 +5,7 @@ import exampleStocks from "../../../../exampleStocks.js";
 
 let stockRepository: Map<string, StockEntity>;
 
-export const initMockRepository = () => {
+export const initStockRepository = () => {
   stockRepository = new Map<string, StockEntity>(
     exampleStocks.map((stock) => [
       stock.ticker,
@@ -14,7 +14,7 @@ export const initMockRepository = () => {
   );
 };
 
-initMockRepository();
+initStockRepository();
 
 export const index = () => {};
 

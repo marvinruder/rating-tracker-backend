@@ -59,7 +59,7 @@ export const openapiDocument: OpenAPIV3.Document = {
             allowReserved: true,
             schema: {
               type: "string",
-              example: "user@example.com",
+              example: "jane.doe@example.com",
             },
           },
           {
@@ -122,7 +122,7 @@ export const openapiDocument: OpenAPIV3.Document = {
             allowReserved: true,
             schema: {
               type: "string",
-              example: "user@example.com",
+              example: "jane.doe@example.com",
             },
           },
           {

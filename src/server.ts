@@ -75,6 +75,7 @@ const statusCodeDescription = (statusCode: number) => {
 server.app.use(cookieParser());
 server.app.use(express.json());
 
+// TODO implement access rights
 server.app.use(async (req, res, next) => {
   if (req.cookies.authToken) {
     try {

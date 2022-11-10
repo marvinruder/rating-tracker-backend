@@ -1,7 +1,21 @@
 /* istanbul ignore file */
-import { UserEntity } from "../../../../models/user.js";
+import { UserEntity, userSchema } from "../../../../models/user.js";
 
-let userRepository: Map<string, UserEntity> = new Map<string, UserEntity>();
+let userRepository: Map<string, UserEntity>;
+
+export const initUserRepository = () => {
+  userRepository = new Map<string, UserEntity>();
+  userRepository.set(
+    "jane.doe@example.com",
+    new UserEntity(userSchema, "jane.doe@example.com", {
+      name: "Jane Doe",
+      accessRights: 1,
+      credentialID: "exampleCredentialID",
+      credentialPublicKey: "exampleCredentialPublicKey",
+      counter: 0,
+    })
+  );
+};
 
 export const fetch = (id: string) => {
   return userRepository.get(id);

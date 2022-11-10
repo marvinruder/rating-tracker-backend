@@ -14,7 +14,7 @@ const { createStock, readStock, updateStock, deleteStock } = await import(
   "./stockRepository"
 );
 import dotenv from "dotenv";
-import { initMockRepository } from "./__mocks__/stockRepositoryBase";
+import { initStockRepository } from "./__mocks__/stockRepositoryBase";
 import { Stock } from "../../../models/stock";
 
 dotenv.config({
@@ -22,7 +22,7 @@ dotenv.config({
 });
 
 beforeAll((done) => {
-  initMockRepository();
+  initStockRepository();
   done();
 });
 
