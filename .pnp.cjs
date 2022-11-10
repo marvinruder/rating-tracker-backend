@@ -40,7 +40,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/eslint-plugin", "virtual:cc23b8fc61b87a1d7c0ac27979fe7b1d50fa65759aa4c971488b27db887a08c7f3db8168b406f5bf31667e5b08e9a9414cd874eefe0a999fecdab0da4c474cd7#npm:5.42.1"],\
             ["@typescript-eslint/parser", "virtual:cc23b8fc61b87a1d7c0ac27979fe7b1d50fa65759aa4c971488b27db887a08c7f3db8168b406f5bf31667e5b08e9a9414cd874eefe0a999fecdab0da4c474cd7#npm:5.42.1"],\
             ["axios", "npm:1.1.3"],\
-            ["body-parser", "npm:1.20.1"],\
             ["chalk", "npm:5.1.2"],\
             ["concurrently", "npm:7.5.0"],\
             ["cookie-parser", "npm:1.4.6"],\
@@ -6517,7 +6516,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/eslint-plugin", "virtual:cc23b8fc61b87a1d7c0ac27979fe7b1d50fa65759aa4c971488b27db887a08c7f3db8168b406f5bf31667e5b08e9a9414cd874eefe0a999fecdab0da4c474cd7#npm:5.42.1"],\
             ["@typescript-eslint/parser", "virtual:cc23b8fc61b87a1d7c0ac27979fe7b1d50fa65759aa4c971488b27db887a08c7f3db8168b406f5bf31667e5b08e9a9414cd874eefe0a999fecdab0da4c474cd7#npm:5.42.1"],\
             ["axios", "npm:1.1.3"],\
-            ["body-parser", "npm:1.20.1"],\
             ["chalk", "npm:5.1.2"],\
             ["concurrently", "npm:7.5.0"],\
             ["cookie-parser", "npm:1.4.6"],\
