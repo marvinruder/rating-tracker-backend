@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { SessionEntity, sessionSchema } from "../../../../models/session.js";
 
-export const sessionTTLInSeconds = 600;
+export const sessionTTLInSeconds = 1;
 
 let sessionRepository: Map<string, SessionEntity>;
 
@@ -18,10 +18,9 @@ export const fetch = (id: string) => {
   return sessionRepository.get(id);
 };
 
-export const refresh = (id: string) => {
-  setTimeout(() => {
-    remove(id);
-  }, 1000 * sessionTTLInSeconds);
+// TODO implement when tested
+export const refresh = () => {
+  return;
 };
 
 export const save = (sessionEntity: SessionEntity) => {
