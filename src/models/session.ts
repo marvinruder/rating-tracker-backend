@@ -3,6 +3,7 @@ import { Entity, Schema } from "redis-om";
 export class Session {
   sessionID: string;
   email: string;
+  /* istanbul ignore next */
   constructor(sessionEntity: SessionEntity) {
     this.sessionID = sessionEntity.entityId;
     this.email = sessionEntity.email;
