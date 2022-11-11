@@ -14,7 +14,6 @@ import axios from "axios";
 import APIError from "./apiError.js";
 import { refreshSessionAndFetchUser } from "./redis/repositories/session/sessionRepository.js";
 import { sessionTTLInSeconds } from "./redis/repositories/session/sessionRepositoryBase.js";
-import util from "node:util";
 
 dotenv.config({
   path: ".env.local",
@@ -102,15 +101,13 @@ server.app.use(
           chalk.cyan(" \uf5ef " + new Date().toISOString()) +
             "  " +
             chalk.yellow(
-              (res.locals.user
+              res.locals.user
                 ? `\uf007 ${res.locals.user.name} (${res.locals.user.email}) from `
-                : "\uf21b ") +
-                (req.headers["x-forwarded-for"]
-                  ? util.format("%s", req.headers["x-forwarded-for"])
-                  : req.socket.remoteAddress)
+                : "\uf21b "
             ) +
             "  " +
-            chalk.magenta("\uf98c" + util.format("%s", req.headers.host)) +
+            // use reverse proxy that sets this header to prevent CWE-134
+            chalk.magenta("\uf98c" + req.headers["x-forwarded-for"]) +
             " "
         ) +
         chalk.grey(""),
