@@ -26,11 +26,11 @@ const origin = `https://${process.env.SUBDOMAIN}.${rpID}`;
 const currentChallenges = {};
 
 class AuthController {
-  getRegistrationOptions(req: Request, res: Response) {
+  async getRegistrationOptions(req: Request, res: Response) {
     const email = req.query.email;
     const name = req.query.name;
     if (typeof email === "string" && typeof name === "string") {
-      if (userExists(email)) {
+      if (await userExists(email)) {
         throw new APIError(
           403,
           "This email address is already registered. Please sign in."
@@ -50,9 +50,9 @@ class AuthController {
       currentChallenges[email] = options.challenge;
       return res.status(200).json(options);
     }
-    throw new APIError(400);
   }
 
+  /* istanbul ignore next */
   async postRegistrationResponse(req: Request, res: Response) {
     const email = req.query.email;
     const name = req.query.name;
@@ -98,7 +98,6 @@ class AuthController {
       }
       throw new APIError(400, "Registration failed");
     }
-    throw new APIError(400);
   }
 
   getAuthenticationOptions(req: Request, res: Response) {
@@ -110,6 +109,7 @@ class AuthController {
     return res.status(200).json(options);
   }
 
+  /* istanbul ignore next */
   async postAuthenticationResponse(req: Request, res: Response) {
     const email = req.body.response.userHandle;
     const user = await readUser(email);
@@ -153,4 +153,5 @@ class AuthController {
     throw new APIError(400, "Authentication failed");
   }
 }
+
 export default new AuthController();

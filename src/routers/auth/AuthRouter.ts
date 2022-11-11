@@ -21,12 +21,14 @@ class AuthRouter {
     this._router.get("/register", async (req: Request, res: Response) => {
       await this._controller.getRegistrationOptions(req, res);
     });
+    /* istanbul ignore next */
     this._router.post("/register", async (req: Request, res: Response) => {
       await this._controller.postRegistrationResponse(req, res);
     });
     this._router.get("/signIn", async (req: Request, res: Response) => {
       await this._controller.getAuthenticationOptions(req, res);
     });
+    /* istanbul ignore next */
     this._router.post("/signIn", async (req: Request, res: Response) => {
       await this._controller.postAuthenticationResponse(req, res);
     });

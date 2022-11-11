@@ -12,7 +12,7 @@ import responseTime from "response-time";
 import { STATUS_CODES } from "http";
 import axios from "axios";
 import APIError from "./apiError.js";
-import { refreshSession } from "./redis/repositories/session/sessionRepository.js";
+import { refreshSessionAndFetchUser } from "./redis/repositories/session/sessionRepository.js";
 import { sessionTTLInSeconds } from "./redis/repositories/session/sessionRepositoryBase.js";
 
 dotenv.config({
@@ -78,7 +78,7 @@ server.app.use(express.json());
 server.app.use(async (req, res, next) => {
   if (req.cookies.authToken) {
     try {
-      res.locals.user = await refreshSession(req.cookies.authToken);
+      res.locals.user = await refreshSessionAndFetchUser(req.cookies.authToken);
       res.cookie("authToken", req.cookies.authToken, {
         maxAge: 1000 * sessionTTLInSeconds,
         httpOnly: true,
