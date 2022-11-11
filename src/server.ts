@@ -2,7 +2,6 @@ import cookieParser from "cookie-parser";
 import * as cron from "cron";
 import dotenv from "dotenv";
 import express, { Request, Response } from "express";
-import rateLimit from "express-rate-limit";
 import cors from "cors";
 import Router from "./routers/Router.js";
 import SwaggerUI from "swagger-ui-express";
@@ -166,10 +165,6 @@ server.app.use(
     validateResponses: true,
   })
 );
-
-const authLimiter = rateLimit({ windowMs: 1000 * 60, max: 60 });
-
-server.app.use("/api/auth", authLimiter);
 
 server.app.use(
   "/api",
