@@ -31,10 +31,9 @@ export const readUser = async (email: string) => {
   const userEntity = await fetch(email);
   if (userEntity && userEntity.name) {
     return new User(userEntity);
-  } else {
-    /* istanbul ignore next */
-    throw new APIError(404, `User ${email} not found.`);
   }
+  /* istanbul ignore next */
+  throw new APIError(404, `User ${email} not found.`);
 };
 
 export const userExists = async (email: string): Promise<boolean> => {

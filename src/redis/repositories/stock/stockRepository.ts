@@ -40,9 +40,8 @@ export const readStock = async (ticker: string) => {
   const stockEntity = await fetch(ticker);
   if (stockEntity && stockEntity.name) {
     return new Stock(stockEntity);
-  } else {
-    throw new APIError(404, `Stock ${ticker} not found.`);
   }
+  throw new APIError(404, `Stock ${ticker} not found.`);
 };
 
 export const readAllStocks = () => {
