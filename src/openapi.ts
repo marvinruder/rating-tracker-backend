@@ -105,6 +105,12 @@ export const openapiDocument: OpenAPIV3.Document = {
               },
             },
           },
+          "429": {
+            description: "Too Many Requests",
+            content: {
+              "text/html": {},
+            },
+          },
         },
       },
       post: {
@@ -161,6 +167,12 @@ export const openapiDocument: OpenAPIV3.Document = {
               },
             },
           },
+          "429": {
+            description: "Too Many Requests",
+            content: {
+              "text/html": {},
+            },
+          },
         },
       },
     },
@@ -190,6 +202,12 @@ export const openapiDocument: OpenAPIV3.Document = {
                   $ref: "#/components/schemas/Error",
                 },
               },
+            },
+          },
+          "429": {
+            description: "Too Many Requests",
+            content: {
+              "text/html": {},
             },
           },
         },
@@ -222,6 +240,12 @@ export const openapiDocument: OpenAPIV3.Document = {
                   $ref: "#/components/schemas/Error",
                 },
               },
+            },
+          },
+          "429": {
+            description: "Too Many Requests",
+            content: {
+              "text/html": {},
             },
           },
         },

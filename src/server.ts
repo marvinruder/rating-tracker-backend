@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import * as cron from "cron";
 import dotenv from "dotenv";
 import express, { Request, Response } from "express";
+import rateLimit from "express-rate-limit";
 import cors from "cors";
 import Router from "./routers/Router.js";
 import SwaggerUI from "swagger-ui-express";
@@ -14,6 +15,7 @@ import axios from "axios";
 import APIError from "./apiError.js";
 import { refreshSessionAndFetchUser } from "./redis/repositories/session/sessionRepository.js";
 import { sessionTTLInSeconds } from "./redis/repositories/session/sessionRepositoryBase.js";
+import util from "node:util";
 
 dotenv.config({
   path: ".env.local",
@@ -104,10 +106,12 @@ server.app.use(
               (res.locals.user
                 ? `\uf007 ${res.locals.user.name} (${res.locals.user.email}) from `
                 : "\uf21b ") +
-                (req.headers["x-forwarded-for"] || req.socket.remoteAddress)
+                (req.headers["x-forwarded-for"]
+                  ? util.format("%s", req.headers["x-forwarded-for"])
+                  : req.socket.remoteAddress)
             ) +
             "  " +
-            chalk.magenta("\uf98c" + req.headers.host) +
+            chalk.magenta("\uf98c" + util.format("%s", req.headers.host)) +
             " "
         ) +
         chalk.grey(""),
@@ -162,6 +166,10 @@ server.app.use(
     validateResponses: true,
   })
 );
+
+const authLimiter = rateLimit({ windowMs: 1000 * 60, max: 60 });
+
+server.app.use("/api/auth", authLimiter);
 
 server.app.use(
   "/api",

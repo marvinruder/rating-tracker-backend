@@ -276,4 +276,13 @@ describe("Authentication API", () => {
     expect(res.body.rpId).toBe(`${process.env.DOMAIN}`);
     expect(res.body.userVerification).toBe("required");
   });
+
+  it("does not provide too many authentication challenges", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for await (const _ of [...Array(60)]) {
+      await requestWithSupertest.get("/api/auth/signIn");
+    }
+    const res = await requestWithSupertest.get("/api/auth/signIn");
+    expect(res.status).toBe(429);
+  });
 });
